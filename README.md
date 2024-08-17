@@ -1,2 +1,2 @@
-# NERF_Turret_Bot
+# Foam Ball Turret Robot
 NERF turret robot that shoots foam balls. In progress....
