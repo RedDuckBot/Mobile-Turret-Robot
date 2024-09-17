@@ -1,0 +1,1 @@
+/usr/bin/aarch64-linux-gnu-g++ -g CMakeFiles/testTurret.dir/main.cpp.o -o testTurret  /usr/lib/aarch64-linux-gnu/libfmt.so.8.1.1 -lpigpio -Wl,--as-needed 
