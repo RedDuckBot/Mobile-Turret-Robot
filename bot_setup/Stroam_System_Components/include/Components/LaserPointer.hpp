@@ -1,11 +1,9 @@
 #ifndef LASERPOINTER
 #define LASERPOINTER
 
-#include "libgpio/DigitalOutput.hpp"
-
 namespace laser_gpio
 {
-    class LaserPointer:
+    class LaserPointer
     {
         public:
             LaserPointer(unint32_t gpioPin);
@@ -15,6 +13,6 @@ namespace laser_gpio
 
         private:
             DigitalOutput laserPin_;
-    }
+    };
 }
 #endif LASERPOINTER
