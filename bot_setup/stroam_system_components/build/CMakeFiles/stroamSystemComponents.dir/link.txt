@@ -1,0 +1,2 @@
+/usr/bin/ar qc libstroamSystemComponents.a CMakeFiles/stroamSystemComponents.dir/src/components/Camera.cpp.o CMakeFiles/stroamSystemComponents.dir/src/components/LaserPointer.cpp.o CMakeFiles/stroamSystemComponents.dir/src/components/Servo.cpp.o CMakeFiles/stroamSystemComponents.dir/src/components/ShootingMotors.cpp.o CMakeFiles/stroamSystemComponents.dir/src/turret/Turret.cpp.o
+/usr/bin/ranlib libstroamSystemComponents.a
