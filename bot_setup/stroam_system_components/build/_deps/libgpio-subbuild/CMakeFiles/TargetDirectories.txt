@@ -1,3 +1,0 @@
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/stroam_system_components/build/_deps/libgpio-subbuild/CMakeFiles/libgpio-populate.dir
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/stroam_system_components/build/_deps/libgpio-subbuild/CMakeFiles/edit_cache.dir
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/stroam_system_components/build/_deps/libgpio-subbuild/CMakeFiles/rebuild_cache.dir

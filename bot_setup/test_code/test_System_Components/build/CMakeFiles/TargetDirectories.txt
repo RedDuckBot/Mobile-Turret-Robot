@@ -1,6 +1,0 @@
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/test_code/test_System_Components/build/CMakeFiles/testComponents.dir
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/test_code/test_System_Components/build/CMakeFiles/edit_cache.dir
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/test_code/test_System_Components/build/CMakeFiles/rebuild_cache.dir
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/test_code/test_System_Components/build/_deps/libgpio-build/CMakeFiles/libgpio.dir
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/test_code/test_System_Components/build/_deps/libgpio-build/CMakeFiles/edit_cache.dir
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/test_code/test_System_Components/build/_deps/libgpio-build/CMakeFiles/rebuild_cache.dir

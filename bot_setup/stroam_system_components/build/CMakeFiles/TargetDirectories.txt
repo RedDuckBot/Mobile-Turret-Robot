@@ -1,6 +1,0 @@
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/stroam_system_components/build/CMakeFiles/stroamSystemComponents.dir
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/stroam_system_components/build/CMakeFiles/edit_cache.dir
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/stroam_system_components/build/CMakeFiles/rebuild_cache.dir
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/stroam_system_components/build/_deps/libgpio-build/CMakeFiles/libgpio.dir
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/stroam_system_components/build/_deps/libgpio-build/CMakeFiles/edit_cache.dir
-/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/stroam_system_components/build/_deps/libgpio-build/CMakeFiles/rebuild_cache.dir

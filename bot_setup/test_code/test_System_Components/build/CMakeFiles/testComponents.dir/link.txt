@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/testComponents.dir/main.cpp.o -o testComponents  /home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/stroam_system_components/build/libstroamSystemComponents.a _deps/libgpio-build/liblibgpio.a -lpigpio -lfmt 
