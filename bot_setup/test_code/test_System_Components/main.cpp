@@ -1,14 +1,6 @@
-#include "components/LaserPointer.hpp"
-
-using Components::LaserPointer;
+#include "turret.hpp"
 
 int main()
 {
-    int laserPinGPIO = 26;
-    LaserPointer laser(laserPinGPIO);   
-
-    laser.on();
-    laser.off();
-
     return 0;
 }
