@@ -1,7 +1,7 @@
-#include "components/LaserPointer.hpp"
+#include "laserPointer.hpp"
 #include <fmt/core.h>
 
-namespace Components
+namespace laser
 {
     LaserPointer::LaserPointer(uint32_t gpioPin):
         laserPin_(gpioPin)

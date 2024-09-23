@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/test_code/test_turret/build",
-  "command": "/usr/bin/aarch64-linux-gnu-g++ -DFMT_LOCALE -DFMT_SHARED  -g -o CMakeFiles/testTurret.dir/main.cpp.o -c /home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/test_code/test_turret/main.cpp",
-  "file": "/home/redbot/projects/Foam-Ball-Turret-Bot/bot_setup/test_code/test_turret/main.cpp"
-}
-]

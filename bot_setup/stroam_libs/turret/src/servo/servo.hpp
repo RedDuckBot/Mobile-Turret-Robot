@@ -1,9 +1,9 @@
 #ifndef SERVO
 #define SERVO
 
-namespace Components
+namespace servo
 {
-    class Camera
+    class Servo
     {
 
     };

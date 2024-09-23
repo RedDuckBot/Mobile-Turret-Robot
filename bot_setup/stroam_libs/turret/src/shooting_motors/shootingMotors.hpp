@@ -1,7 +1,7 @@
 #ifndef SHOOTING_MOTORS
 #define SHOOTINTG_MOTORS
 
-namespace Components
+namespace shootingMotors
 {
     class ShootingMotors
     {

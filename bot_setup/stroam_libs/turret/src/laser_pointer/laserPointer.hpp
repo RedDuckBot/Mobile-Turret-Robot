@@ -3,7 +3,7 @@
 
 #include "libgpio/DigitalOutput.hpp"
 
-namespace Components
+namespace laser
 {
     class LaserPointer
     {

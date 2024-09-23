@@ -1,6 +1,6 @@
-#include "components/ShootingMotors.hpp"
+#include "shootingMotors.hpp"
 
-namespace Components
+namespace shootingMotors
 {
 
 }

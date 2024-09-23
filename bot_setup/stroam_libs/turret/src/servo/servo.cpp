@@ -1,7 +1,7 @@
 
-#include "components/Servo.hpp"
+#include "servo.hpp"
 
-namespace Components
+namespace servo
 {
 
 }
