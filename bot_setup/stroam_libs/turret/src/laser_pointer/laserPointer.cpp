@@ -6,18 +6,16 @@ namespace laser
     LaserPointer::LaserPointer(uint32_t gpioPin):
         laserPin_(gpioPin)
     {
-        fmt::print("Laser ready\n");
+        off();
     }
 
     void LaserPointer::on()
     {
-        fmt::print("ON\n");
-
+        laserPin_.setOutput(true);
     }
 
     void LaserPointer::off()
     {
-
-        fmt::print("ON\n");
+        laserPin_.setOutput(false);
     }
 }
