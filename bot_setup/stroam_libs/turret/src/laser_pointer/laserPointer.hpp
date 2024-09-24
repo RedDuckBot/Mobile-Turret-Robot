@@ -1,20 +1,20 @@
 #ifndef LASER
 #define LASER
 
-#include "libgpio/DigitalOutput.hpp"
+#include <pigpio.h>
 
 namespace laser
 {
     class LaserPointer
     {
     	public:
-            LaserPointer(uint32_t gpioPin);
+            LaserPointer();
 
             void on();
             void off();
 
         private:
-	    libgpio::DigitalOutput laserPin_;
+        const unsigned int laserPin_ = 26;
     };
 }
 #endif 

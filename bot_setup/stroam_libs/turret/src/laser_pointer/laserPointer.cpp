@@ -1,21 +1,20 @@
 #include "laserPointer.hpp"
-#include <fmt/core.h>
 
 namespace laser
 {
-    LaserPointer::LaserPointer(uint32_t gpioPin):
-        laserPin_(gpioPin)
+    LaserPointer::LaserPointer()
     {
+        gpioSetMode(laserPin_, PI_OUTPUT);
         off();
     }
 
     void LaserPointer::on()
     {
-        laserPin_.setOutput(true);
+        gpioWrite(laserPin_, 1);
     }
 
     void LaserPointer::off()
     {
-        laserPin_.setOutput(false);
+        gpioWrite(laserPin_, 0);
     }
 }
