@@ -1,9 +1,14 @@
 #ifndef TURRET
 #define TURRET
 
-#include "laserPointer.hpp"
+#include "digitalOutputDevice.hpp"
 #include "servo.hpp"
-#include "shootingMotors.hpp"
+
+//Define pulse width ranges for base servo and pusher rod servo
+#define MAX_BASE_SERVO 2500
+#define MIN_BASE_SERVO 550
+#define MAX_PUSHER_SERVO 2400
+#define MIN_PUSHER_SERVO 600 
 
 namespace turret
 {
@@ -11,15 +16,16 @@ namespace turret
     {
         public:
             Turret();
-            void rotate();
+            void move_to_pos(int angle);
             void laser_on();
             void laser_off();
             void fire();
 
         private:
-            laser::LaserPointer laser;
-            servo::Servo baseServo;
-            servo::Servo pusherRodServo;
+            outputDevice::DigitalOutputDevice laser_;
+            outputDevice::DigitalOutputDevice shootingMotors_;
+            servo::Servo baseServo_;
+            servo::Servo pusherRodServo_;
 
 
 

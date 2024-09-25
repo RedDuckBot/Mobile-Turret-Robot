@@ -10,3 +10,5 @@ A C++ library representing an interface for Stroam's turret.
 | --| --|
 |Laser| 26 |
 |Servo (base)| 13 |
+
+Table above represents the default pinouts.
