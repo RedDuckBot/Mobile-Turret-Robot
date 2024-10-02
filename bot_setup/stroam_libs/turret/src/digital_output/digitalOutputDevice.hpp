@@ -1,5 +1,5 @@
-#ifndef DIGITALOUTPUTDEVICE
-#define DIGITALOUTPUTDEVICE
+#ifndef OUTPUTDEVICE
+#define OUTPUTDEVICE
 
 #include <pigpio.h>
 
@@ -14,7 +14,7 @@ namespace outputDevice
             void off();
 
         private:
-        const unsigned int device_GPIO_pin_; 
+            unsigned int device_GPIO_pin_; 
     };
 }
 #endif 

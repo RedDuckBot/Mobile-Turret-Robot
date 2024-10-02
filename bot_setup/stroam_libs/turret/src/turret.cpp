@@ -2,13 +2,16 @@
 
 namespace turret
 {
-    Turret::Turret(unsigned int laser_gpio_pin=26, unsigned int 
-        shooting_gpio_pin=16, unsigned int servo_gpio_pin=13, unsigned int
-        pusherRod_gpio_pin=12): 
-        laser_(laser_gpio_pin),
-        shootingMotors_(shooting_gpio_pin),
-        baseServo_(servo_gpio_pin, MIN_BASE_SERVO, MAX_BASE_SERVO),
-        pusherRodServo_(pusherRod_gpio_pin, MIN_PUSHER_SERVO, MAX_PUSHER_SERVO)
+    Turret::Turret(
+        //Pins defined as GPIO pins
+        unsigned int laser_pin=26, 
+        unsigned int shooting_motors_pin=16, 
+        unsigned int base_servo_pin=13, 
+        unsigned int pusherRod_pin=12): 
+            laser_(laser_pin),
+            shootingMotors_(shooting_motors_pin),
+            baseServo_(base_servo_pin, MIN_BASE_SERVO, MAX_BASE_SERVO),
+            pusherRodServo_(pusherRod_pin, MIN_PUSHER_SERVO, MAX_PUSHER_SERVO)
         {
 
         }
@@ -26,5 +29,10 @@ namespace turret
     void Turret::move_to_pos(int angle)
     {
         baseServo_.rotate_to_pos(angle);
+    }
+
+    void Turret::fire()
+    {
+
     }
 }

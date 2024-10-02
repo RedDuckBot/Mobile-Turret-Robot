@@ -26,9 +26,6 @@ namespace turret
             outputDevice::DigitalOutputDevice shootingMotors_;
             servo::Servo baseServo_;
             servo::Servo pusherRodServo_;
-
-
-
     };
 }
 #endif
