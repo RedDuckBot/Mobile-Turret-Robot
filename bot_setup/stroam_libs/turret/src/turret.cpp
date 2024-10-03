@@ -4,10 +4,10 @@ namespace turret
 {
     Turret::Turret(
         //Pins defined as GPIO pins
-        unsigned int laser_pin=26, 
-        unsigned int shooting_motors_pin=16, 
-        unsigned int base_servo_pin=13, 
-        unsigned int pusherRod_pin=12): 
+        unsigned int laser_pin, 
+        unsigned int shooting_motors_pin, 
+        unsigned int base_servo_pin, 
+        unsigned int pusherRod_pin): 
             laser_(laser_pin),
             shootingMotors_(shooting_motors_pin),
             baseServo_(base_servo_pin, MIN_BASE_SERVO, MAX_BASE_SERVO),

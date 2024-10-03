@@ -15,7 +15,13 @@ namespace turret
     class Turret
     {
         public:
-            Turret();
+            Turret(
+                //Pins defined as GPIO pins
+                unsigned int laser_pin=26,
+                unsigned int shooting_motors_pin=16,
+                unsigned int base_serov_pin=13,
+                unsigned int pusherRod_pin=12
+            );
             void move_to_pos(int angle);
             void laser_on();
             void laser_off();

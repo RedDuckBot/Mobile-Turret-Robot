@@ -2,6 +2,7 @@
 #define SERVO
 
 #include <pigpio.h>
+#include "../../../device/include/device/device.hpp"
 
 namespace servo
 {

@@ -2,6 +2,12 @@
 
 namespace outputDevice
 {
+    DigitalOutputDevice::~DigitalOutputDevice() 
+    {
+        fmt::print("Closing GPIO pin {}\n",device_GPIO_pin_);
+        off();
+    }
+
     DigitalOutputDevice::DigitalOutputDevice(unsigned int gpioPin)
     {
         this -> device_GPIO_pin_ = gpioPin;

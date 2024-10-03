@@ -7,6 +7,6 @@ pigpio daemon and closing GPIO pins used.
 ## Dependencies
 - [pigpio](https://github.com/joan2937/pigpio) C library for GPIO control
 
-## Stroam's Devices
+## Stroam's Device Classes
 - DigitalOutputDevice --> turret library
 - Servo --> turret library

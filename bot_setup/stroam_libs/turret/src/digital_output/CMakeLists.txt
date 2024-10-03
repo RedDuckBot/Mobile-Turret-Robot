@@ -1,5 +1,2 @@
-
-add_library(digitalOutput OBJECT laserPointer.cpp)
-target_include_directories(digitalOutput PRIVATE .)
-
-target_link_libraries(digitalOutput PRIVATE pigpio)
+add_library(digitalOutput OBJECT digitalOutputDevice.cpp)
+target_link_libraries(digitalOutput PUBLIC pigpio Device::device)

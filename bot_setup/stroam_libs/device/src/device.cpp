@@ -22,6 +22,7 @@ namespace device
         if (deviceCount == 0)
         {
             gpioTerminate();
+            fmt::print("Released GPIO resources.\n");
         }
     }
 }
