@@ -30,8 +30,8 @@ namespace turret
         private:
             outputDevice::DigitalOutputDevice laser_;
             outputDevice::DigitalOutputDevice shootingMotors_;
-            servo::Servo baseServo_;
-            servo::Servo pusherRodServo_;
+            stroams_servo::Servo baseServo_;
+            stroams_servo::Servo pusherRodServo_;
     };
 }
 #endif

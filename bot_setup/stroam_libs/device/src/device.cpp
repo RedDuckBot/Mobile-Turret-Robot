@@ -5,7 +5,8 @@ namespace device
     int Device::deviceCount = 0;
     int Device::gpioHandle = -1;
 
-    Device::Device()
+    Device::Device(unsigned int device_GPIO_pin, const std::string& deviceName) 
+        : deviceName_(deviceName), device_GPIO_pin_(device_GPIO_pin)
     {
         if (deviceCount == 0)
         {
@@ -27,6 +28,7 @@ namespace device
             pigpio_stop(gpioHandle);
             fmt::print("Closing pigpiod daemon.\n");
         }
+        fmt::print("Closing {}'s GPIO pin {}\n", deviceName_, device_GPIO_pin_);
     }
 
     int Device::getGPIOHandle() const

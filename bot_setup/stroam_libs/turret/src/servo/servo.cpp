@@ -1,20 +1,31 @@
 #include "servo.hpp"
 
-namespace servo
+namespace stroams_servo
 {
     Servo::Servo(unsigned int servoPin, unsigned int min_pulse_width, 
-        unsigned int max_pulse_width)
+        unsigned int max_pulse_width, int starting_angle, 
+        const std::string& servoName): 
+            Device(servoPin, servoName) 
     {
+        this -> starting_angle_ = starting_angle;
         this -> servoPin_ = servoPin;
         this -> min_pulse_width_ = min_pulse_width;
         this -> max_pulse_width_ = max_pulse_width;
 
     }
 
+    Servo::~Servo()
+    {
+        set_servo_pulsewidth(getGPIOHandle(), servoPin_, 
+            get_pwm_value_from_angle(starting_angle_)); 
+        
+        set_servo_pulsewidth(getGPIOHandle(), servoPin_, 0); //stop servo
+    }
+
     void Servo::rotate_to_pos(int angle)
     {
         unsigned pwm_value = get_pwm_value_from_angle(angle);
-        gpioServo(servoPin_, pwm_value);
+        set_servo_pulsewidth(getGPIOHandle(), servoPin_, pwm_value);
     }
 
     unsigned int Servo::get_pwm_value_from_angle(int angle)

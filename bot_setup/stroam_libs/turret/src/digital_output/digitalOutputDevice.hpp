@@ -5,19 +5,22 @@
 #include <fmt/core.h>
 #include "../../../device/include/device/device.hpp"
 
+using device::Device;
+
 namespace outputDevice
 {
-    class DigitalOutputDevice : public device::Device
+    class DigitalOutputDevice : public Device
     {
     	public:
-            DigitalOutputDevice(unsigned int gpioPin);
+            DigitalOutputDevice(unsigned int gpioPin, 
+                const std::string& digitalDeviceName="");
 
             void on();
             void off();
             virtual ~DigitalOutputDevice();
 
         private:
-            unsigned int device_GPIO_pin_; 
+            unsigned int digitalOutputPin_;
     };
 }
 #endif 

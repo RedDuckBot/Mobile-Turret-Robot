@@ -4,24 +4,25 @@ namespace outputDevice
 {
     DigitalOutputDevice::~DigitalOutputDevice() 
     {
-        fmt::print("Closing GPIO pin {}\n",device_GPIO_pin_);
         off();
     }
 
-    DigitalOutputDevice::DigitalOutputDevice(unsigned int gpioPin)
+    DigitalOutputDevice::DigitalOutputDevice(unsigned int gpioPin, 
+        const std::string& digitalDeviceName) : 
+            Device(gpioPin, digitalDeviceName) 
     {
-        this -> device_GPIO_pin_ = gpioPin;
+        this -> digitalOutputPin_ = gpioPin;
         set_mode(getGPIOHandle(), gpioPin, PI_OUTPUT);
         off();
     }
 
     void DigitalOutputDevice::on()
     {
-        gpio_write(getGPIOHandle(), device_GPIO_pin_, 1);
+        gpio_write(getGPIOHandle(), digitalOutputPin_, 1);
     }
 
     void DigitalOutputDevice::off()
     {
-        gpio_write(getGPIOHandle(), device_GPIO_pin_, 0);
+        gpio_write(getGPIOHandle(), digitalOutputPin_, 0);
     }
 }
