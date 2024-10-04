@@ -3,6 +3,7 @@
 
 #include "digitalOutputDevice.hpp"
 #include "servo.hpp"
+#include <unistd.h>
 
 //Define pulse width ranges for base servo and pusher rod servo
 #define MAX_BASE_SERVO 2500
@@ -26,6 +27,8 @@ namespace turret
             void laser_on();
             void laser_off();
             void fire();
+            void move_rod_forward();
+            void move_rod_backward();
 
         private:
             outputDevice::DigitalOutputDevice laser_;

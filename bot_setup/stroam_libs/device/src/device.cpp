@@ -23,12 +23,13 @@ namespace device
     Device::~Device()
     {
         deviceCount--;
+        fmt::print("Closing {}'s GPIO pin {}\n", deviceName_, device_GPIO_pin_);
+
         if (deviceCount == 0)
         {
             pigpio_stop(gpioHandle);
             fmt::print("Closing pigpiod daemon.\n");
         }
-        fmt::print("Closing {}'s GPIO pin {}\n", deviceName_, device_GPIO_pin_);
     }
 
     int Device::getGPIOHandle() const

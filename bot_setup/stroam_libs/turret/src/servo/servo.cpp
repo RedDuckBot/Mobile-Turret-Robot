@@ -12,19 +12,31 @@ namespace stroams_servo
         this -> min_pulse_width_ = min_pulse_width;
         this -> max_pulse_width_ = max_pulse_width;
 
+        set_PWM_frequency(getGPIOHandle(), servoPin_,50); //50 Hz
+
+        rotate_to_pos(starting_angle);
     }
 
     Servo::~Servo()
     {
-        set_servo_pulsewidth(getGPIOHandle(), servoPin_, 
-            get_pwm_value_from_angle(starting_angle_)); 
-        
-        set_servo_pulsewidth(getGPIOHandle(), servoPin_, 0); //stop servo
+        rotate_to_pos(starting_angle_);
+        sleep(2);
+        rotate_to_pos(-1,true);
     }
 
-    void Servo::rotate_to_pos(int angle)
+    void Servo::rotate_to_pos(int angle, bool stop_servo)
     {
-        unsigned pwm_value = get_pwm_value_from_angle(angle);
+        unsigned pwm_value;
+
+        if (stop_servo)
+        {
+            pwm_value = 0;
+        }
+        else
+        {
+            pwm_value = get_pwm_value_from_angle(angle);
+        }
+
         set_servo_pulsewidth(getGPIOHandle(), servoPin_, pwm_value);
     }
 
@@ -51,6 +63,4 @@ namespace stroams_servo
 
         return pwm_value;
     }
-
-
 }

@@ -2,8 +2,8 @@
 #define SERVO
 
 #include <pigpiod_if2.h>
-#include <iostream>
 #include <string>
+#include <unistd.h>
 #include "../../../device/include/device/device.hpp"
 
 using device::Device;
@@ -16,8 +16,10 @@ namespace stroams_servo
             Servo(unsigned int servoPin, unsigned int min_pulse_width, 
                 unsigned int max_pulse_width, int starting_angle=0, 
                 const std::string& servoName="");
-           virtual ~Servo(); 
-            void rotate_to_pos(int angle); //Angle between 0 and 180 deg
+            virtual ~Servo(); 
+
+            //Angle between 0 and 180 deg
+            void rotate_to_pos(int angle, bool stop_servo=false); 
 
         private:
             unsigned int servoPin_; 
