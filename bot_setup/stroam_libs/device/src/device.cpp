@@ -10,7 +10,7 @@ namespace device
     {
         if (deviceCount == 0)
         {
-            //Locally, connect to pigpio daemon (pigpiod)
+            //Locally connect to pigpio daemon (pigpiod)
             gpioHandle = pigpio_start(NULL,NULL);
             if (gpioHandle < 0)
             {
@@ -23,7 +23,7 @@ namespace device
     Device::~Device()
     {
         deviceCount--;
-        fmt::print("Closing {}'s GPIO pin {}\n", deviceName_, device_GPIO_pin_);
+        //fmt::print("Closing {}'s GPIO pin {}\n", deviceName_, device_GPIO_pin_);
 
         if (deviceCount == 0)
         {

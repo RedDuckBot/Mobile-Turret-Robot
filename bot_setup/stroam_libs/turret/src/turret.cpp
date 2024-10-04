@@ -45,10 +45,8 @@ namespace turret
     void Turret::fire()
     {
         shootingMotors_.on();
-        //std::this_thread::sleep_for(std::chrono::milliseconds(4500));
         sleep(4.5); //4.5 seconds
         pusherRodServo_.rotate_to_pos(0);
-        //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
         sleep(2);
         shootingMotors_.off();
         pusherRodServo_.rotate_to_pos(180);
