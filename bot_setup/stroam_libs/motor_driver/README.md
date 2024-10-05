@@ -5,6 +5,7 @@ C++ library for representing a motor controller. Stroam is using an L298N motor 
 ## Dependencies
 - [`fmt`](https://github.com/fmtlib/fmt) : C++ library for formatting
 - [`device`](../device/) : C++ library from Stroam's libraries 
+- [`turret`](../turret/) : C++ library from Stroam's libraries; MotorDriver uses DigitalOutputDevice from this lib 
 
 ## Pinouts
  |GPIO Pin| L298N Pin | Motors | 
