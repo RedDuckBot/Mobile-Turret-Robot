@@ -3,7 +3,6 @@
 **/bin/
 **/install/
 **/log/
-.vscode
 
 #Ignore symbolic links in project used for export target cmake files
 TurretTargets.cmake
