@@ -12,22 +12,22 @@ using namespace std::placeholders;
  * @class TurretNode
  * @brief Represents an action server for Stroam's turret. 
  */
-class TurretNode : public Node 
+class TurretNode: public rclcpp::Node 
 {
     public:
-        TurretNode() 
+        TurretNode() : 
+		Node("Motor_Controller")
         {
 		turret_enabled = false;
 		callback_group_1_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
-
-		turret_server_ = rclcpp_action::create_server<TurretInstruct>(
-				this,
-				"turret_actions",
-				std::bind(&TuretNode::goal_callback, this, _1, _2),
-				std::bind(&TurretNode::cancel_callback, this, _1),
-				std::bind(&TurretNode::handle_accepted_callback, this, _1),
-				rcl_action_server_get_default_options(),
-				callback_group_1_
+		
+		 turret_server_ = rclcpp_action::create_server<TurretInstruct>(
+			this,
+			"turret_actions",
+			std::bind(&TurretNode::goal_callback,this, _1, _2),				 		      	      	      std::bind(&TurretNode::cancel_callback, this, _1),
+			std::bind(&TurretNode::handle_accepted_callback, this, _1),
+		        rcl_action_server_get_default_options(),
+			callback_group_1_
 		);
 		
 		RCLCPP_INFO(this->get_logger(), "Turret node initialized");
@@ -37,15 +37,16 @@ class TurretNode : public Node
         std::unique_ptr<Turret> turret_ = std::make_unique<Turret>();
 
 	bool turret_enabled; 
-
-	rclcpp_CallbackGroup::sharedPtr callback_group_1_;
+	
+	rclcpp_action::Server<TurretInstruct>::SharedPtr turret_server_;
+	rclcpp::CallbackGroup::SharedPtr callback_group_1_;
 	
 	/**
 	 * @brief Handle incoming turret goal from TurretInstruct
 	 */
-	rclcpp_action::GoalResponse:: goal_callback(
+	rclcpp_action::GoalResponse goal_callback(
 		const rclcpp_action::GoalUUID &uuid, 
-		std::shared_ptr<const TurretInstruct> goal)
+		std::shared_ptr<const TurretInstruct::Goal> goal)
 	{
 		(void) uuid;
 		(void) goal;
@@ -66,12 +67,12 @@ class TurretNode : public Node
 	 * @brief Handle accepted turret goal sent from Stroam manager node
 	 */
 	void handle_accepted_callback(
-		const std::shared_ptr<TurretInstruct> goal_handle)
+		const std::shared_ptr<TurretGoalHandle> goal_handle)
 	{
 		(void) goal_handle;
 	}
 
-}
+};
 
 
 int main(int argc, char **argv)
@@ -79,10 +80,10 @@ int main(int argc, char **argv)
     rclcpp::init(argc, argv);
 
     auto turret_node = std::make_shared<TurretNode>();
-    rclcpp::executors::MultiThreadedEXecutor executor;
+    rclcpp::executors::MultiThreadedExecutor executor;
 
     executor.add_node(turret_node);
-    executor.spin():
+    executor.spin();
 
     rclcpp::spin(turret_node->get_node_base_interface());
     rclcpp::shutdown();

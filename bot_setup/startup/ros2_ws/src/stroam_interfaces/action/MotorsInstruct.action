@@ -1,0 +1,10 @@
+#GOAL for motor controller instructions
+bool motors_enabled
+
+float32 left_joy_stick_y
+float32 right_joy_stick_r
+---
+#RESULT
+string result
+---
+#FEEDBACK
