@@ -1,0 +1,11 @@
+#GOAL for turret instructions
+bool turret_enabled 
+bool fire_turret
+bool laser_on
+uint8 angle_pos
+---
+#RESULT
+string result
+
+---
+#FEEDBACK
