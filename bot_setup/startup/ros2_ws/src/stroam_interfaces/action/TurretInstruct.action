@@ -2,7 +2,7 @@
 bool turret_enabled 
 bool fire_turret
 bool laser_on
-uint8 angle_pos
+float32 right_joy_stick_x
 ---
 #RESULT
 string result

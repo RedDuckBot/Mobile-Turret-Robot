@@ -29,8 +29,10 @@ class MotorControllerNode : public rclcpp::Node
     public:
         MotorControllerNode() :
 	    Node("Motors_Node"),
-            leftMotors_(IN3, IN4, ENB, "leftMotors"),
-            rightMotors_(IN1, IN2, ENA, "rightMotors")
+            leftMotors_(std::make_unique<MotorDriver>(
+				IN3, IN4, ENB, "leftMotors")),
+            rightMotors_(std::make_unique<MotorDriver>(
+				IN1, IN2, ENA, "rightMotors"))
         {
 		motor_control_enabled_ = false;
 		callback_group_1_ = this->create_callback_group(
@@ -51,8 +53,8 @@ class MotorControllerNode : public rclcpp::Node
         }
 
     private:
-        MotorDriver leftMotors_; 
-        MotorDriver rightMotors_; 
+    	std::unique_ptr <MotorDriver> leftMotors_; 
+    	std::unique_ptr <MotorDriver> rightMotors_; 
 
 		bool motor_control_enabled_;
 		std::mutex mutex_;
@@ -156,13 +158,13 @@ class MotorControllerNode : public rclcpp::Node
 		}
 
 		//Check for change in motor directions and set them
-		if (leftMotors_.getDirection() != left_joy_dir)
+		if (leftMotors_->getDirection() != left_joy_dir)
 		{
-			leftMotors_.setDirection(left_joy_dir);
+			leftMotors_->setDirection(left_joy_dir);
 		}
-		if (rightMotors_.getDirection() != right_joy_dir)
+		if (rightMotors_->getDirection() != right_joy_dir)
 		{
-			rightMotors_.setDirection(right_joy_dir);
+			rightMotors_->setDirection(right_joy_dir);
 		}
 
 		new_left_motors_effort = controllerInput_to_motorEffort(
@@ -170,8 +172,8 @@ class MotorControllerNode : public rclcpp::Node
 		new_right_motors_effort = controllerInput_to_motorEffort(
 			abs(right_joy_y));
 
-		leftMotors_.setEffortPercent(new_left_motors_effort);
-		rightMotors_.setEffortPercent(new_right_motors_effort);
+		leftMotors_->setEffortPercent(new_left_motors_effort);
+		rightMotors_->setEffortPercent(new_right_motors_effort);
 	}
 
 	/**
