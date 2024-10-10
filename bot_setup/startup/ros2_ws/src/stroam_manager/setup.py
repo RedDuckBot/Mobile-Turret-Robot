@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "manager=stroam_manager.lifecycleManagerNode:main"
+            "manager=stroam_manager.stroam_manager_node:main"
         ],
     },
 )
