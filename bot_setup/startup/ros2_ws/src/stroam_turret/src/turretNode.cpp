@@ -2,6 +2,9 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "stroam_interfaces/action/turret_instruct.hpp"
 #include "turret/turret.hpp"
+#include <fmt/core.h>
+#include <string>
+#include <iostream>
 
 //Turret positions are in degrees
 #define CENTER_TURRET_POS 90 
@@ -12,6 +15,7 @@ using turret::Turret;
 using TurretInstruct = stroam_interfaces::action::TurretInstruct;
 using TurretGoalHandle = rclcpp_action::ServerGoalHandle<TurretInstruct>;
 using namespace std::placeholders;
+using namespace fmt; 
 
 
 /**
@@ -22,7 +26,7 @@ class TurretNode: public rclcpp::Node
 {
     public:
         TurretNode() : 
-		Node("Motor_Controller"),
+		Node("Turret"),
 		turret_(std::make_unique<Turret>())
         {
 		turret_enabled_ = false;
@@ -86,6 +90,9 @@ class TurretNode: public rclcpp::Node
 	/**
 	 * @brief Handle a rejected turret goal request
 	 *
+
+Contribution settings
+
 	 */
 	rclcpp_action::CancelResponse cancel_callback(
 		const std::shared_ptr<TurretGoalHandle> goal_handle)
@@ -146,14 +153,21 @@ class TurretNode: public rclcpp::Node
 		int offset_angle; 
 
 		offset_angle = get_offset_angle(joy_stick_val);
+
+		// std::string t1 = std::to_string(joy_stick_val);
+		// RCLCPP_INFO(this->get_logger(),t1.c_str());
+
 		if (offset_angle == 0) return;
+
 
 		if (offset_angle > 0)
 		{
+			offset_angle -= 15;
 			handle_right_rotation(offset_angle); 
 		}
 		else 
 		{
+			offset_angle += 15;
 			handle_left_rotation(offset_angle); 
 		}
 	}
