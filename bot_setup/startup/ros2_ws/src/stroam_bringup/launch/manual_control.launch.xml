@@ -1,0 +1,5 @@
+<launch>
+	<node pkg="stroam_manager" exec="manager" name="manager_node"/>
+	<node pkg="stroam_motor_controller" exec="motor_controller_node"/>
+	<node pkg="stroam_turret" exec="turret_node"/>
+</launch>

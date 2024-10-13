@@ -19,6 +19,7 @@ class StroamNodeManager(Node):
         motors_client_: Represents an action client for motor controller node
         camera_client_: Represents a service client for lifecycle camera node 
         controller_client_: Represensts a subscriber for Xbox360 contr inputs
+        in_drive_mode_: Used to differentiate between turret and drive mode
     """
 
     def __init__(self):
@@ -29,12 +30,19 @@ class StroamNodeManager(Node):
         motors_topic_name = "/motor_controller_actions"
         camera_srv_change_state_name = "/camera/change_state"
 
-        self.motors_client_ = self.ActionClient(self, MotorsInstruct,
+        self.motors_client_ = ActionClient(self, MotorsInstruct,
                  motors_topic_name)
+        self.turret_client_ = ActionClient(self, TurretInstruct, 
+                turret_topic_name)
         self.controller_client_ = self.create_subscription(XboxController,
-                "/xbox_controller", handle_controller_messages, 10)
-        self.camera_client_ = self.create_client(ChangeState, 
-                camera_srv_change_state_name)
+                "/xbox_controller", self.handle_controller_messages, 10)
+        #self.camera_client_ = self.create_client(ChangeState, 
+                #camera_srv_change_state_name)
+
+        self.in_drive_mode_ = True
+        self.switched_mode_ = False
+        self.first_time_entering_mode_ = True
+        self.laser_on_ = False
 
         self.get_logger().info("Stroam manager started")
 
@@ -50,11 +58,44 @@ class StroamNodeManager(Node):
         Args:
                 msg (XboxController): Contains controller inputs.
         """
+        
+        self.display_any_changes_in_mode(msg)
 
         if msg.mode:
-                send_motors_goal(msg)
+            self.send_motors_goal(msg)
         else:
-                send_turret_goal(msg)
+            self.send_turret_goal(msg)
+
+    def display_any_changes_in_mode(self, msg: XboxController):
+        """
+        Check for any changes in modes: turret to driving and vice versa.
+        If so then display it.
+
+        Args:
+            msg (XboxController): Contains controller inputs.
+        """
+        if self.first_time_entering_mode_:
+            self.in_drive_mode_ = msg.mode
+            self.switched_mode_ = not self.in_drive_mode_
+            self.display_mode()
+            self.first_time_entering_mode_ = False
+        else:
+            if self.in_drive_mode_ == self.switched_mode_:
+                self.switched_mode_ = True
+                self.display_mode()
+                self.in_drive_mode_ = msg.mode
+
+    def display_mode(self):
+        """
+        Utility func. for display_any_changes_in_mode.
+        """
+
+        mode_str = "Drive mode" if self.in_drive_mode_ else "Turret mode" 
+
+        if self.first_time_entering_mode_:
+            self.get_logger().info("Starting session in " + mode_str)
+        else:
+            self.get_logger().info("Switching to " + mode_str)
 
     def send_motors_goal(self, msg: XboxController):
         """
@@ -80,8 +121,22 @@ class StroamNodeManager(Node):
         Args:
                 msg (XboxController): Contains controller inputs.
         """
+       
+        #Create turret goal
+        turret_goal = TurretInstruct.Goal()
+        turret_goal.turret_enabled = True
+        turret_goal.fire_turret = msg.x 
 
-        pass
+        if msg.b: #If true switch laser state
+            self.laser_on_ = not self.laser_on_
+            turret_goal.laser_on = self.laser_on_
+        else:
+            turret_goal.laser_on = self.laser_on_
+        
+        turret_goal.right_joy_stick_x = msg.right_joy_x
+        #self.get_logger().info("manager: " + str(msg.right_joy_x))
+        
+        self.turret_client_.send_goal_async(turret_goal)
 
 
 def main(args=None):
