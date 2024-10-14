@@ -1,5 +1,7 @@
 #GOAL for turret instructions
-bool turret_enabled 
+
+bool is_button_presses
+bool is_joy_moves
 bool fire_turret
 bool laser_on
 float32 right_joy_stick_x

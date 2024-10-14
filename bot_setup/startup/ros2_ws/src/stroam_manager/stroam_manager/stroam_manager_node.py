@@ -15,7 +15,8 @@ class StroamNodeManager(Node):
     motor controller, and camera nodes.
 
     Attributes:
-        turret_client_: Represents an action client for turret node 
+        turret_button_client_: Represents an action client for turret buttons 
+        turret_joy_client_: Represents an action client for turret joy-sticks 
         motors_client_: Represents an action client for motor controller node
         camera_client_: Represents a service client for lifecycle camera node 
         controller_client_: Represensts a subscriber for Xbox360 contr inputs
@@ -26,21 +27,21 @@ class StroamNodeManager(Node):
 
         super().__init__("stroam_manager")
         
-        turret_topic_name = "/turret_actions"
         motors_topic_name = "/motor_controller_actions"
         camera_srv_change_state_name = "/camera/change_state"
 
         self.motors_client_ = ActionClient(self, MotorsInstruct,
                  motors_topic_name)
-        self.turret_client_ = ActionClient(self, TurretInstruct, 
-                turret_topic_name)
+        self.turret_joy_client_ = ActionClient(self, TurretInstruct, 
+                "/turret_joy_moves")
+        self.turret_button_client_ = ActionClient(self, TurretInstruct, 
+                "/turret_button_presses")
         self.controller_client_ = self.create_subscription(XboxController,
                 "/xbox_controller", self.handle_controller_messages, 10)
         #self.camera_client_ = self.create_client(ChangeState, 
                 #camera_srv_change_state_name)
 
         self.in_drive_mode_ = True
-        self.switched_mode_ = False
         self.first_time_entering_mode_ = True
         self.laser_on_ = False
 
@@ -76,14 +77,12 @@ class StroamNodeManager(Node):
         """
         if self.first_time_entering_mode_:
             self.in_drive_mode_ = msg.mode
-            self.switched_mode_ = not self.in_drive_mode_
             self.display_mode()
             self.first_time_entering_mode_ = False
         else:
-            if self.in_drive_mode_ == self.switched_mode_:
-                self.switched_mode_ = True
-                self.display_mode()
+            if msg.mode != self.in_drive_mode_:
                 self.in_drive_mode_ = msg.mode
+                self.display_mode()
 
     def display_mode(self):
         """
@@ -108,7 +107,6 @@ class StroamNodeManager(Node):
 
         #Create motors goal
         motors_goal = MotorsInstruct.Goal()
-        motors_goal.motors_enabled = True
         motors_goal.left_joy_stick_y = msg.left_joy_y
         motors_goal.right_joy_stick_y = msg.right_joy_y
 
@@ -121,22 +119,36 @@ class StroamNodeManager(Node):
         Args:
                 msg (XboxController): Contains controller inputs.
         """
-       
-        #Create turret goal
-        turret_goal = TurretInstruct.Goal()
-        turret_goal.turret_enabled = True
-        turret_goal.fire_turret = msg.x 
 
-        if msg.b: #If true switch laser state
-            self.laser_on_ = not self.laser_on_
-            turret_goal.laser_on = self.laser_on_
-        else:
-            turret_goal.laser_on = self.laser_on_
+        turret_joy_goal = TurretInstruct.Goal()
+       
+        if msg.x or msg.b:
+            self.help_turret_goal_button_press(msg)
+            return
+
+        turret_joy_goal.is_joy_moves = True
+        turret_joy_goal.is_button_presses = False
+        turret_joy_goal.right_joy_stick_x = msg.right_joy_x
         
-        turret_goal.right_joy_stick_x = msg.right_joy_x
-        #self.get_logger().info("manager: " + str(msg.right_joy_x))
-        
-        self.turret_client_.send_goal_async(turret_goal)
+        self.turret_joy_client_.send_goal_async(turret_joy_goal)
+
+    def help_turret_goal_button_press(self, msg: XboxController):
+        """
+        Send button presses for turret. Utility func. for send_turret_goal. 
+
+         Args:
+            msg (XboxController): Contains controller inputs.
+        """
+
+        turret_button_goal = TurretInstruct.Goal() 
+
+        turret_button_goal.fire_turret = True if msg.x else False
+        turret_button_goal.laser_on = True if msg.b else False  
+
+        turret_button_goal.is_button_presses = True
+        turret_button_goal.is_joy_moves = False
+
+        self.turret_button_client_.send_goal_async(turret_button_goal)
 
 
 def main(args=None):

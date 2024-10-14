@@ -5,11 +5,12 @@
 #include <fmt/core.h>
 #include <string>
 #include <iostream>
+#include <cstdlib>
 
 //Turret positions are in degrees
 #define CENTER_TURRET_POS 90 
-#define MAX_TURRET_POS 180
-#define MIN_TURRET_POS 0
+#define MAX_TURRET_POS_LEFT 180 
+#define MAX_TURRET_POS_RIGHT 0  
 
 using turret::Turret;
 using TurretInstruct = stroam_interfaces::action::TurretInstruct;
@@ -21,6 +22,8 @@ using namespace fmt;
 /**
  * @class TurretNode
  * @brief Represents an action server for Stroam's turret. 
+ *
+ * This server node receives turret instructions from Stroam's managing node.
  */
 class TurretNode: public rclcpp::Node 
 {
@@ -32,16 +35,31 @@ class TurretNode: public rclcpp::Node
 		turret_enabled_ = false;
 		current_turret_pos_ =  CENTER_TURRET_POS;
 
+		//Initialize call back groups
 		callback_group_1_ = this->
 			create_callback_group(rclcpp::CallbackGroupType::Reentrant);
-		
-		 turret_server_ = rclcpp_action::create_server<TurretInstruct>(
+
+		callback_group_2_ = this->
+			create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+
+		//Initialize servers
+		 turret_joy_server_ = rclcpp_action::create_server<TurretInstruct>(
 			this,
-			"turret_actions",
-			std::bind(&TurretNode::goal_callback,this, _1, _2),				 		      	      	      std::bind(&TurretNode::cancel_callback, this, _1),
+			"turret_joy_moves",
+			std::bind(&TurretNode::goal_callback,this, _1, _2),				 		      	      	      
+			std::bind(&TurretNode::cancel_callback, this, _1),
 			std::bind(&TurretNode::handle_accepted_callback, this, _1),
 		        rcl_action_server_get_default_options(),
 			callback_group_1_
+		);
+		 turret_button_server_ = rclcpp_action::create_server<TurretInstruct>(
+			this,
+			"turret_button_presses",
+			std::bind(&TurretNode::goal_callback,this, _1, _2),				 		      	      	      
+			std::bind(&TurretNode::cancel_callback, this, _1),
+			std::bind(&TurretNode::handle_accepted_callback, this, _1),
+		        rcl_action_server_get_default_options(),
+			callback_group_2_
 		);
 		
 		RCLCPP_INFO(this->get_logger(), "Turret node initialized");
@@ -55,8 +73,14 @@ class TurretNode: public rclcpp::Node
 		std::mutex mutex_;
 
 		std::shared_ptr<TurretGoalHandle> current_handle_goal_;
-		rclcpp_action::Server<TurretInstruct>::SharedPtr turret_server_;
-		rclcpp::CallbackGroup::SharedPtr callback_group_1_;
+		rclcpp_action::Server<TurretInstruct>::SharedPtr turret_joy_server_;
+		rclcpp_action::Server<TurretInstruct>::SharedPtr turret_button_server_;
+
+
+		//Callback group 1 contains main turret node
+		//Callback group 2 contains a node for handling turret button presses
+		rclcpp::CallbackGroup::SharedPtr callback_group_1_; 
+		rclcpp::CallbackGroup::SharedPtr callback_group_2_;
 	
 	/**
 	 * @brief Handle incoming turret goal (TurretInstruct)
@@ -69,30 +93,67 @@ class TurretNode: public rclcpp::Node
 		const rclcpp_action::GoalUUID &uuid, 
 		std::shared_ptr<const TurretInstruct::Goal> goal)
 	{
+		(void) uuid;
+
+		bool callback_result; 
+
+		if (goal -> is_button_presses) {
+			callback_result = button_goal_callback(goal);
+		}
+		else if (goal -> is_joy_moves) 
 		{
-			std::lock_guard<std::mutex> lock(mutex_);
-			if (current_handle_goal_) 
-			{
-				if (current_handle_goal_ -> is_active())
-				{
-					RCLCPP_INFO(this->get_logger(), 
-						"[Turret Server]: A goal is active, rejected new goal");
-					return rclcpp_action::GoalResponse::REJECT;
-				}
-			}
+			callback_result = joy_goal_callback(goal);
 		}
 
-		(void) uuid;
+		if (callback_result) 
+			return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+		else return rclcpp_action::GoalResponse::REJECT;
+		// float joy_stick_val = goal -> right_joy_stick_x;	
+		// std::string t1 = std::to_string(joy_stick_val);
+		// RCLCPP_INFO(this->get_logger(),t1.c_str());
+		// { 
+		// 	std::lock_guard<std::mutex> lock(mutex_);
+		// 	if (current_handle_goal_) 
+		// 	{
+		// 		if (current_handle_goal_ -> is_active())
+		// 		{
+		// 			RCLCPP_INFO(this->get_logger(), 
+		// 				"[Turret Server]: A goal is active, rejected new goal");
+		// 			return rclcpp_action::GoalResponse::REJECT;
+		// 		}
+		// 	}
+		// }
+	}
+
+	/**
+	 *@brief Determine if turret joy-stick moves can be accepted.
+	 *
+	 * Utility function for general goal_callback func.
+	 *@param goal contains turret instructions
+	 *@return true if no goals related to joy moves is in exec., else false
+	 */
+	bool button_goal_callback(std::shared_ptr<const TurretInstruct::Goal> goal)
+	{
 		(void) goal;
-		return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+		return true;
+	}
+
+	/**
+	 *@brief Determine if turret button presses can be accepted.
+	 *
+	 * Utility function for general goal_callback func.
+	 *@param goal contains turret instructions
+	 *@return true if no goals related to button presses is in exec., else false
+	 */
+	bool joy_goal_callback(std::shared_ptr<const TurretInstruct::Goal> goal)
+	{
+		(void) goal;
+		return true;
 	}
 
 	/**
 	 * @brief Handle a rejected turret goal request
 	 *
-
-Contribution settings
-
 	 */
 	rclcpp_action::CancelResponse cancel_callback(
 		const std::shared_ptr<TurretGoalHandle> goal_handle)
@@ -108,13 +169,14 @@ Contribution settings
 	void handle_accepted_callback(
 		const std::shared_ptr<TurretGoalHandle> new_goal_handle)
 	{
-		{
-			std::lock_guard<std::mutex> lock (mutex_);
-			this -> current_handle_goal_ = new_goal_handle;
-		}
+		(void) new_goal_handle;
+		// {
+		// 	std::lock_guard<std::mutex> lock (mutex_);
+		// 	this -> current_handle_goal_ = new_goal_handle;
+		// }
 
-		execute_turret_goal(new_goal_handle);
-		send_goal_result_(new_goal_handle);
+		// execute_turret_goal(new_goal_handle);
+		// send_goal_result_(new_goal_handle);
 	}
 
 	/**
@@ -150,24 +212,20 @@ Contribution settings
 	 */
 	void handle_turret_rotation(float joy_stick_val)
 	{
-		int offset_angle; 
+		int offset_angle, offset_buffer = 15; 
 
 		offset_angle = get_offset_angle(joy_stick_val);
 
-		// std::string t1 = std::to_string(joy_stick_val);
-		// RCLCPP_INFO(this->get_logger(),t1.c_str());
-
 		if (offset_angle == 0) return;
 
-
-		if (offset_angle > 0)
+		if (joy_stick_val > 0.0)
 		{
-			offset_angle -= 15;
+			offset_angle -= offset_buffer;
 			handle_right_rotation(offset_angle); 
 		}
 		else 
 		{
-			offset_angle += 15;
+			offset_angle -= offset_buffer;
 			handle_left_rotation(offset_angle); 
 		}
 	}
@@ -183,19 +241,13 @@ Contribution settings
 	{
 		int offset_angle = 0; 
 
-
 		if (joyVal == 0.0)	
 		{
 			return offset_angle;
 		}
-		else if(joyVal > 0.0)
-		{
-			offset_angle = joyVal * CENTER_TURRET_POS;
-
-		} 
 		else 
 		{
-			offset_angle = joyVal * CENTER_TURRET_POS;
+			offset_angle = std::abs(joyVal * CENTER_TURRET_POS);
 		}
 
 		return offset_angle; 
@@ -203,17 +255,17 @@ Contribution settings
 
 	/**
 	 *@brief Offset from turrets current pos to the right
-	 *@param offset_angle positive offset angle (0,90]
+	 *@param offset_angle offset angle (0,90]
 	 */	
 	void handle_right_rotation(int offset_angle) 
 	{
-		if (offset_angle + current_turret_pos_ > MAX_TURRET_POS)
+		if (current_turret_pos_ - offset_angle < MAX_TURRET_POS_RIGHT)
 		{
-			current_turret_pos_ = MAX_TURRET_POS;
+			current_turret_pos_ = MAX_TURRET_POS_RIGHT;
 		}
 		else
 		{
-			current_turret_pos_ = offset_angle + current_turret_pos_;
+			current_turret_pos_ = current_turret_pos_ - offset_angle;
 		}
 		
 		turret_ -> move_to_pos(current_turret_pos_);
@@ -221,28 +273,28 @@ Contribution settings
 
 	/**
 	 *@brief Offset from turrets current pos to the left 
-	 *@param offset_angle negative offset angle (0,90] 
+	 *@param offset_angle  offset angle (0,90] 
 	 */	
 	void handle_left_rotation(int offset_angle) 
 	{
-		if (offset_angle + current_turret_pos_ < MIN_TURRET_POS)
+		if (current_turret_pos_ + offset_angle > MAX_TURRET_POS_LEFT)
 		{
-			current_turret_pos_ = MIN_TURRET_POS;
+			current_turret_pos_ = MAX_TURRET_POS_LEFT;
 		}
 		else 
 		{
-			current_turret_pos_ = offset_angle + current_turret_pos_;
+			current_turret_pos_ = current_turret_pos_ + offset_angle;
 		}
-		
+
 		turret_ -> move_to_pos(current_turret_pos_);
 	}
+
 	void send_goal_result_(const std::shared_ptr<TurretGoalHandle> goal_handle)
 	{
 		auto result = std::make_shared<TurretInstruct::Result>();
 		result->result = "Success";
 		goal_handle->succeed(result);
 	}
-
 };
 
 
@@ -260,4 +312,3 @@ int main(int argc, char **argv)
 
     return 0;
 }
-
