@@ -112,6 +112,7 @@ class TurretNode: public rclcpp::Node
 				current_joy_handle_goal_, mutex_joy_, "joy-stick"
 			);
 		}
+		else callback_result = false;
 
 		if (callback_result) 
 			return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
@@ -142,8 +143,8 @@ class TurretNode: public rclcpp::Node
 				if (current_handle_goal -> is_active())
 				{
 					RCLCPP_INFO(this->get_logger(), 
-						("A" + instruction_name + 
-						"goal is active, rejected new one.").c_str()
+						("A " + instruction_name + 
+						" goal is active, rejected new one.").c_str()
 					);
 					return false; 
 				}
@@ -180,8 +181,8 @@ class TurretNode: public rclcpp::Node
 			{
 				std::lock_guard<std::mutex> lock (mutex_button_);
 				this -> current_button_handle_goal_ = new_goal_handle;
-				//execute_turret_button_goal(new_goal_handle);
 			}
+				execute_turret_button_goal(new_goal_handle);
 		}
 
 		if (turret_goal -> is_joy_moves)
@@ -189,11 +190,11 @@ class TurretNode: public rclcpp::Node
 			{
 				std::lock_guard<std::mutex> lock (mutex_joy_);
 				this -> current_joy_handle_goal_ = new_goal_handle;
-				execute_turret_joy_goal(new_goal_handle);
 			}
+				execute_turret_joy_goal(new_goal_handle);
 		}
 
-		// send_goal_result_(new_goal_handle);
+		send_goal_result_(new_goal_handle);
 	}
 
 	/**

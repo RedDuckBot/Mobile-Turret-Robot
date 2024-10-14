@@ -21,6 +21,7 @@ class StroamNodeManager(Node):
         camera_client_: Represents a service client for lifecycle camera node 
         controller_client_: Represensts a subscriber for Xbox360 contr inputs
         in_drive_mode_: Used to differentiate between turret and drive mode
+        laser_on_: Remember laser state before sending to turret button server
     """
 
     def __init__(self):
@@ -143,7 +144,11 @@ class StroamNodeManager(Node):
         turret_button_goal = TurretInstruct.Goal() 
 
         turret_button_goal.fire_turret = True if msg.x else False
-        turret_button_goal.laser_on = True if msg.b else False  
+        if msg.b: #Toggle laser
+            self.laser_on_ = not self.laser_on_
+            turret_button_goal.laser_on = self.laser_on_
+        else:
+            turret_button_goal.laser_on = self.laser_on_
 
         turret_button_goal.is_button_presses = True
         turret_button_goal.is_joy_moves = False
