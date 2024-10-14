@@ -5,4 +5,4 @@ to turret_joy, and motors joy-stick moves to motor_controller nodes.
 
 # Dependencies
 - [`stroam_interfaces`] (../stroam_interfaces) : Contains definitions for Stroam's instructions (actions) and Xbox controller inputs (message)
-- [`turret`]
+- [`turret`] (../../../)

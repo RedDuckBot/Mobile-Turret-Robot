@@ -21,9 +21,11 @@ using namespace fmt;
 
 /**
  * @class TurretNode
- * @brief Represents an action server for Stroam's turret. 
+ * @brief Represents a server for Stroam's turret. 
  *
  * This server node receives turret instructions from Stroam's managing node.
+ * Two action servers within this class handle requests for turret button 
+ * presses and joy-stick moves.
  */
 class TurretNode: public rclcpp::Node 
 {
@@ -32,7 +34,6 @@ class TurretNode: public rclcpp::Node
 		Node("Turret"),
 		turret_(std::make_unique<Turret>())
         {
-		turret_enabled_ = false;
 		current_turret_pos_ =  CENTER_TURRET_POS;
 
 		//Initialize call back groups
@@ -42,7 +43,7 @@ class TurretNode: public rclcpp::Node
 		callback_group_2_ = this->
 			create_callback_group(rclcpp::CallbackGroupType::Reentrant);
 
-		//Initialize servers
+		//Initialize action servers: button presses and joy-stick movements
 		 turret_joy_server_ = rclcpp_action::create_server<TurretInstruct>(
 			this,
 			"turret_joy_moves",
@@ -68,11 +69,12 @@ class TurretNode: public rclcpp::Node
     private:
         std::unique_ptr<Turret> turret_; 
 
-		bool turret_enabled_; 
 		int current_turret_pos_; //[0,180] Degrees 
-		std::mutex mutex_;
+		std::mutex mutex_button_; //Lock used by turret button server
+		std::mutex mutex_joy_;   //Lock used by turret joy-stick server
 
-		std::shared_ptr<TurretGoalHandle> current_handle_goal_;
+		std::shared_ptr<TurretGoalHandle> current_button_handle_goal_;
+		std::shared_ptr<TurretGoalHandle> current_joy_handle_goal_;
 		rclcpp_action::Server<TurretInstruct>::SharedPtr turret_joy_server_;
 		rclcpp_action::Server<TurretInstruct>::SharedPtr turret_button_server_;
 
@@ -86,7 +88,9 @@ class TurretNode: public rclcpp::Node
 	 * @brief Handle incoming turret goal (TurretInstruct)
 	 *
 	 * Policy: A new turret instruction is accepted provided that a current 
-	 * goal isn't being executed, otherwise reject it. 
+	 * goal isn't being executed, otherwise reject it.  
+	 * These instructions come in as either joy-stick moves or button presses
+	 * which are handled by the action servers.
 	 *@param goal new incoming turret instruction 
 	 */
 	rclcpp_action::GoalResponse goal_callback(
@@ -98,62 +102,62 @@ class TurretNode: public rclcpp::Node
 		bool callback_result; 
 
 		if (goal -> is_button_presses) {
-			callback_result = button_goal_callback(goal);
+			callback_result = help_goal_callback(
+				current_button_handle_goal_, mutex_button_, "button"
+			);
 		}
 		else if (goal -> is_joy_moves) 
 		{
-			callback_result = joy_goal_callback(goal);
+			callback_result = help_goal_callback(
+				current_joy_handle_goal_, mutex_joy_, "joy-stick"
+			);
 		}
 
 		if (callback_result) 
 			return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 		else return rclcpp_action::GoalResponse::REJECT;
-		// float joy_stick_val = goal -> right_joy_stick_x;	
-		// std::string t1 = std::to_string(joy_stick_val);
-		// RCLCPP_INFO(this->get_logger(),t1.c_str());
-		// { 
-		// 	std::lock_guard<std::mutex> lock(mutex_);
-		// 	if (current_handle_goal_) 
-		// 	{
-		// 		if (current_handle_goal_ -> is_active())
-		// 		{
-		// 			RCLCPP_INFO(this->get_logger(), 
-		// 				"[Turret Server]: A goal is active, rejected new goal");
-		// 			return rclcpp_action::GoalResponse::REJECT;
-		// 		}
-		// 	}
-		// }
 	}
 
 	/**
-	 *@brief Determine if turret joy-stick moves can be accepted.
+	 *@brief Determine if newest turret instruction can be executed. 
 	 *
-	 * Utility function for general goal_callback func.
-	 *@param goal contains turret instructions
-	 *@return true if no goals related to joy moves is in exec., else false
+	 * Utility function for general goal_callback func. These instructions are
+	 * either button presses or joy-stick moves
+	 *@param current_handle_goal either current button or joy-stick goal 
+	 *@param thread_lock either button or joy-stick thread lock 
+	 *@param instruction_name the name of type of instruc. handle: button or mv
+	 *@return true if newest turret goal can be executed, i.e. a current one
+	 *        isn't in execution. 
 	 */
-	bool button_goal_callback(std::shared_ptr<const TurretInstruct::Goal> goal)
+	bool help_goal_callback(
+		std::shared_ptr<TurretGoalHandle> current_handle_goal,
+		std::mutex& thread_lock,
+		const std::string instruction_name
+		 )
 	{
-		(void) goal;
-		return true;
-	}
+		{ 
+			std::lock_guard<std::mutex> lock(thread_lock);
+			if (current_handle_goal) 
+			{
+				if (current_handle_goal -> is_active())
+				{
+					RCLCPP_INFO(this->get_logger(), 
+						("A" + instruction_name + 
+						"goal is active, rejected new one.").c_str()
+					);
+					return false; 
+				}
+			}
+		}
 
-	/**
-	 *@brief Determine if turret button presses can be accepted.
-	 *
-	 * Utility function for general goal_callback func.
-	 *@param goal contains turret instructions
-	 *@return true if no goals related to button presses is in exec., else false
-	 */
-	bool joy_goal_callback(std::shared_ptr<const TurretInstruct::Goal> goal)
-	{
-		(void) goal;
 		return true;
 	}
 
 	/**
 	 * @brief Handle a rejected turret goal request
-	 *
+	 * 
+	 * Currently, no measures need be taken for canceled turret instruction
+	 * since new instruc. are ignored if turret is handling a current one. 
 	 */
 	rclcpp_action::CancelResponse cancel_callback(
 		const std::shared_ptr<TurretGoalHandle> goal_handle)
@@ -163,52 +167,74 @@ class TurretNode: public rclcpp::Node
 	}
 	
 	/**
-	 * @brief Handle accepted turret goal sent from Stroam manager node
-	 *@param new_goal_handle the latest turret action 
+	 *@brief Handle accepted turret goal (either button presses or joy moves) 
+	 *@param goal_handle the latest turret action 
 	 */
 	void handle_accepted_callback(
 		const std::shared_ptr<TurretGoalHandle> new_goal_handle)
 	{
-		(void) new_goal_handle;
-		// {
-		// 	std::lock_guard<std::mutex> lock (mutex_);
-		// 	this -> current_handle_goal_ = new_goal_handle;
-		// }
+		auto turret_goal = new_goal_handle -> get_goal();
 
-		// execute_turret_goal(new_goal_handle);
+		if (turret_goal -> is_button_presses)
+		{
+			{
+				std::lock_guard<std::mutex> lock (mutex_button_);
+				this -> current_button_handle_goal_ = new_goal_handle;
+				//execute_turret_button_goal(new_goal_handle);
+			}
+		}
+
+		if (turret_goal -> is_joy_moves)
+		{
+			{
+				std::lock_guard<std::mutex> lock (mutex_joy_);
+				this -> current_joy_handle_goal_ = new_goal_handle;
+				execute_turret_joy_goal(new_goal_handle);
+			}
+		}
+
 		// send_goal_result_(new_goal_handle);
 	}
 
 	/**
-	 *@brief Operate turret based on passed turret instructions 
-	 * 
-	 * @param goal_handle the action containing turret instructions 
+	 *@brief Execute button commands (firing,toggle laser)
+	 *@param goal_button_handle the action containing turret button values
 	 */
-	void execute_turret_goal(const std::shared_ptr<TurretGoalHandle> 
-		goal_handle)
+	void execute_turret_button_goal(const std::shared_ptr<TurretGoalHandle>
+		goal_button_handle)
+		{
+			auto turret_button_goal = goal_button_handle -> get_goal();
+
+			if (turret_button_goal -> laser_on)
+			{
+				turret_ -> laser_on();
+			}
+			else
+			{
+				turret_ -> laser_off();
+			}
+
+			if (turret_button_goal -> fire_turret)
+			{
+				turret_ -> fire();
+			}
+		}
+
+	/**
+	 *@brief Execute turret movement 
+	 * 
+	 * @param goal_joy_handle the action containing turret joy-stick values  
+	 */
+	void execute_turret_joy_goal(const std::shared_ptr<TurretGoalHandle> 
+		goal_joy_handle)
 	{
-		auto turret_goal = goal_handle -> get_goal();
+		auto turret_joy_goal = goal_joy_handle -> get_goal();
 
-		if (turret_goal -> fire_turret)
-		{
-			turret_-> fire();
-			return;
-		}
-
-		if (turret_goal -> laser_on)
-		{
-			turret_ -> laser_on();
-		}
-		else
-		{
-			turret_ -> laser_off();
-		}
-
-		handle_turret_rotation(turret_goal-> right_joy_stick_x);
+		handle_turret_rotation(turret_joy_goal-> right_joy_stick_x);
 	}
 
 	/**
-	 *@brief Set turrets position (utility function for execute_turret_goal)
+	 *@brief Set turrets position 
 	 */
 	void handle_turret_rotation(float joy_stick_val)
 	{
