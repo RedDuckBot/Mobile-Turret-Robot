@@ -8,8 +8,8 @@
 //Define pulse width ranges for base servo and pusher rod servo
 #define MAX_BASE_SERVO 2500
 #define MIN_BASE_SERVO 550
-#define MAX_PUSHER_SERVO 2400
-#define MIN_PUSHER_SERVO 600 
+#define MAX_PUSHER_SERVO 2200
+#define MIN_PUSHER_SERVO 800 
 
 namespace turret
 {

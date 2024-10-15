@@ -39,8 +39,8 @@ class StroamNodeManager(Node):
                 "/turret_button_presses")
         self.controller_client_ = self.create_subscription(XboxController,
                 "/xbox_controller", self.handle_controller_messages, 10)
-        #self.camera_client_ = self.create_client(ChangeState, 
-                #camera_srv_change_state_name)
+        # self.camera_client_ = self.create_client(ChangeState, 
+        #         camera_srv_change_state_name)
 
         self.in_drive_mode_ = True
         self.first_time_entering_mode_ = True

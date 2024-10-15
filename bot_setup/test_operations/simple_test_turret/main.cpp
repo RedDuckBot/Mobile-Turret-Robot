@@ -18,8 +18,8 @@ bool pusher_rod_engaged = false;
 #define MAX_BASE_SERVO 2500
 
 //Pulse width range for MG90S micro servo 
-#define MIN_PUSHER_SERVO 600 
-#define MAX_PUSHER_SERVO 2400
+#define MIN_PUSHER_SERVO 800 
+#define MAX_PUSHER_SERVO 2200
 
 using namespace fmt;
 
@@ -48,6 +48,7 @@ int main()
 
 void setup_gpio_pins()
 {
+    gpioSetPWMfrequency(pusherPin, 50); //Hz
     gpioServo(baseServoPin, MIN_BASE_SERVO);
     gpioServo(pusherPin, MAX_PUSHER_SERVO);
     gpioSetMode(motorPin, PI_OUTPUT);
