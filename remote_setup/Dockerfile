@@ -4,6 +4,7 @@ WORKDIR /stroam_remote
 COPY cyclonedds.xml /tmp/cyclonedds.xml
 COPY .tmux.conf /root
 COPY packages /stroam_remote/packages
+COPY startup /stroam_remote/startup
 
 #Setup for cyclondds middleware
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
