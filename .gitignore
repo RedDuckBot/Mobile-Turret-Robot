@@ -4,7 +4,6 @@
 **/install/
 **/log/
 cyclonedds.xml
-camera_server_view.py
 
 #Ignore symbolic links in project used for export target cmake files
 TurretTargets.cmake

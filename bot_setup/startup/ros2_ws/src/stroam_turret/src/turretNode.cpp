@@ -239,7 +239,7 @@ class TurretNode: public rclcpp::Node
 	 */
 	void handle_turret_rotation(float joy_stick_val)
 	{
-		int offset_angle, offset_buffer = 15; 
+		int offset_angle; //offset_buffer = 15; 
 
 		offset_angle = get_offset_angle(joy_stick_val);
 
@@ -247,12 +247,12 @@ class TurretNode: public rclcpp::Node
 
 		if (joy_stick_val > 0.0)
 		{
-			offset_angle -= offset_buffer;
+			//offset_angle -= offset_buffer;
 			handle_right_rotation(offset_angle); 
 		}
 		else 
 		{
-			offset_angle -= offset_buffer;
+			//offset_angle -= offset_buffer;
 			handle_left_rotation(offset_angle); 
 		}
 	}
