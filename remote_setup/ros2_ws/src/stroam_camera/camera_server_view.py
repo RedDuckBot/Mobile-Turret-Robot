@@ -18,7 +18,7 @@ def main():
         data = pickle.loads(data)
 
         img = cv2.imdecode(data, cv2.IMREAD_COLOR)
-        cv2.imshow("Im Server", img)
+        cv2.imshow("Turret View", img)
 
         if cv2.waitKey(5) & 0xFF == 113:
             break
