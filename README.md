@@ -60,7 +60,7 @@ The Raspberry PI 3B+ was powered using a 5V power bank while all other devices i
 <p align="center">
   <img title='Turret Circuit' src=docs/images/turret_schematic.png width="800">
 </p>
-Two step down converts were used to operate the turret: 12V to 5V for devices like servos, laser diode and 2 channel relay module, as well as 12V to 8V for powering the shooting motors. As shown in the turret schematic, a NPN mosfet was used to turn on and off the laser diode by connecting a GPIO pin from the Raspberry PI to it's gate. 
+Two step down converts were used to power devices for the turret system: 12V to 5V for devices like servos, laser diode and 2 channel relay module, and 12V to 8V for powering the shooting motors. As shown in the turret schematic, a NPN mosfet was used to turn on and off the laser diode by connecting a GPIO pin from the Raspberry PI to it's gate. 
 
 ### Drive System Schematic
 <p align="center">
