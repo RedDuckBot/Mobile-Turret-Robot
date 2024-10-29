@@ -1,7 +1,7 @@
 # Mobile Turret Robot
 A differential drive robot, named Stroam, is equipped with a one degree of freedom turret that shoots foam balls. 
 Currently, Stroam is only controlled manually where an Xbox 360 controller is used to drive and operate the turret.
-Stroam's software was built using ROS2 Humble.
+Most of Stroam's software was built on the framework ROS2 Humble.
 
 <p align='center'>
     <img src=docs/images/stroam_manual_demo.gif width="600">
