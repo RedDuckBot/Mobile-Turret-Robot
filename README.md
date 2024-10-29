@@ -51,9 +51,11 @@ a message representing Xbox 360 controller inputs.
 
 ### 3D Printed Parts
 
-The only stl files provided in this project are the ones used to build the chassis, given that the turret was a hacked design: turret is composed of 3D printed parts that are fitted to a shooting mechanism taken out a NERF Rival gun. The tires and rims are connected to motors shafts using [6mm universal hubs](https://ca.robotshop.com/products/lynxmotion-hub-02-universal-hub?variant=42413375488151) and 3D printed axel. However, the 3D printed axel was not used in this robot since they kept breaking due to radial load; instead some big bolts were machine down on a metal lath and fitted into the tires. And for the top chassis cover, a clear acyrlic sheet was cut out and fitted using a CNC machine (the stl for this in the 3D_prints directory).
+The only stl files provided in this project are the ones used to build the chassis, given that the turret was a hacked design: turret is composed of 3D printed parts that are fitted to a shooting mechanism taken out a NERF Rival gun. The tires and rims are connected to motors shafts using [6mm universal hubs](https://ca.robotshop.com/products/lynxmotion-hub-02-universal-hub?variant=42413375488151) and 3D printed axel. However, the 3D printed axel was not used in this robot since they kept breaking due to radial load; instead some big bolts were machine down on a metal lath and fitted into the tires. And for the top chassis cover, a clear acyrlic sheet was cut out and fitted using a CNC machine (the stl file for this is found in the 3D_prints directory).
 
 ##  ⚡ Circuit Diagrams
+The Raspberry PI 3B+ was powered using a 5V power bank while all other devices in the project were powered from the 12V LIPO battery.
+
 ### Turret Schematic 
 <p align="center">
   <img title='Turret Circuit' src=docs/images/turret_schematic.png width="800">
