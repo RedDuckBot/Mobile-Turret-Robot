@@ -71,4 +71,4 @@ As shown in the above schematic, a L298N motor controller is connected to a Rasb
 
 ## 🔮 Future Work
 Currently, Stroam can only be operated manually; however, the plan is to provide the robot with the task of following a route with targets off to the side.
-This task is meant to be performed autonmously and will be a computer vision application.
+This task is meant to be performed autonmously and will be a computer vision application. Also, there are plans for adding another degree of rotational movement since Stroam only has yaw and no pitch. 
