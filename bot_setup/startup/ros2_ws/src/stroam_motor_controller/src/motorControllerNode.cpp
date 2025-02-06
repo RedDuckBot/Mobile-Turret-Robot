@@ -56,12 +56,12 @@ class MotorControllerNode : public rclcpp::Node
     	std::unique_ptr <MotorDriver> leftMotors_; 
     	std::unique_ptr <MotorDriver> rightMotors_; 
 
-		bool motor_control_enabled_;
-		std::mutex mutex_;
+	bool motor_control_enabled_;
+	std::mutex mutex_;
 
-		std::shared_ptr<MotorsGoalHandle> current_handle_goal_;//motor instructs
-		rclcpp_action::Server<MotorsInstruct>::SharedPtr motor_contr_server_;
-		rclcpp::CallbackGroup::SharedPtr callback_group_1_;
+	std::shared_ptr<MotorsGoalHandle> current_handle_goal_;//motor instructs
+	rclcpp_action::Server<MotorsInstruct>::SharedPtr motor_contr_server_;
+	rclcpp::CallbackGroup::SharedPtr callback_group_1_;
 	
 	/**
 	 * @brief Handle incoming motor controller goal inside MotorsInstruct
